@@ -82,6 +82,10 @@ class LabelSubmitter():
         return stats_df
 
 def plot_outlier_scores(scores):
+    """
+    To-Do: modify such that it can deal with the predictions from the API
+    """
+    raise NotImplementedError
     roc_score = roc_auc_score(train.isFraud, scores)
     classify_results = pd.DataFrame(data=pd.concat((train.isFraud, pd.Series(scores)), axis=1))
     classify_results.rename(columns={0:'score'}, inplace=True)
@@ -92,9 +96,14 @@ def plot_outlier_scores(scores):
     return classify_results
 
 
-def plot_top_N(scores, N=100):
+def plot_top_N(scores, y_true, N=100):
+    """
+    To-Do: modify such that it can deal with the predictions from the API
+    """
+    raise NotImplementedError
+
     N = min(N, len(scores))
-    classify_results = pd.DataFrame(data=pd.concat((train.isFraud, pd.Series(scores)), axis=1))
+    classify_results = pd.DataFrame(data=pd.concat((y_true, pd.Series(scores)), axis=1))
     classify_results.rename(columns={0:'score'}, inplace=True)
     classify_results = classify_results.sort_values(by='score', ascending=False)[:N]
     Npos_in_N = classify_results['isFraud'].sum()
