@@ -1,6 +1,6 @@
 import requests
 import json
-
+import seaborn as sns 
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
@@ -11,6 +11,9 @@ from sklearn.metrics import roc_auc_score
 
 
 class LabelSubmitter():
+    """
+    To-do: generate a nice message when token is expired
+    """
     def __init__(self, username, password, url='http://127.0.0.1:5000'):
         self.username = username
         self.password = password
@@ -38,7 +41,9 @@ class LabelSubmitter():
                     json={'data': {'idx': idx}},
                    headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
         try:
+            self.res = res
             result = json.loads(res.text)['result']
+
             unzips = list(zip(*result))
             labels = pd.Series(index=unzips[0], data=unzips[1]).sort_index()
             self.last_labels = labels
@@ -63,6 +68,7 @@ class LabelSubmitter():
             print('number of predictions made: {:d}'.format(int(len(labels))))
             print('total number of positives found: {:d}'.format(int(labels.sum())))
             print('total precision: {:.2%}'.format(labels.mean()))
+            return labels
         except Exception:
             print(json.loads(res.text))
 
@@ -81,35 +87,39 @@ class LabelSubmitter():
             plt.tight_layout()
         return stats_df
 
-def plot_outlier_scores(scores):
+def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
     """
-    To-Do: modify such that it can deal with the predictions from the API
+    y_true: np-array
+    scores: np-array
+
+    kdeplot_options are passed to sns.kdeplot
     """
-    raise NotImplementedError
-    roc_score = roc_auc_score(train.isFraud, scores)
-    classify_results = pd.DataFrame(data=pd.concat((train.isFraud, pd.Series(scores)), axis=1))
-    classify_results.rename(columns={0:'score'}, inplace=True)
-    sns.kdeplot(classify_results.loc[classify_results.isFraud==0, 'score'], label='negatives', shade=True, bw=0.01)
-    sns.kdeplot(classify_results.loc[classify_results.isFraud==1, 'score'], label='positives', shade=True, bw=0.01)
-    plt.title('AUC: {:.3f}'.format(roc_score))
+    roc_score = roc_auc_score(y_true, scores)
+    classify_results = pd.DataFrame(data=pd.concat((pd.Series(y_true), pd.Series(scores)), axis=1))
+    classify_results.rename(columns={0:'true', 1:'score'}, inplace=True)
+    sns.kdeplot(classify_results.loc[classify_results.true==0, 'score'], label='negatives',
+                shade=True, **kdeplot_options)
+    sns.kdeplot(classify_results.loc[classify_results.true==1, 'score'], label='positives',
+                shade=True, **kdeplot_options)
+    plt.title('{} AUC: {:.3f}'.format(title, roc_score))
     plt.xlabel('Score');
     return classify_results
 
 
-def plot_top_N(scores, y_true, N=100):
+def plot_top_N(y_true, scores, N=100):
     """
-    To-Do: modify such that it can deal with the predictions from the API
+    y_true: np-array
+    scores: np-array
     """
-    raise NotImplementedError
 
     N = min(N, len(scores))
-    classify_results = pd.DataFrame(data=pd.concat((y_true, pd.Series(scores)), axis=1))
-    classify_results.rename(columns={0:'score'}, inplace=True)
+    classify_results = pd.DataFrame(data=pd.concat((pd.Series(y_true), pd.Series(scores)), axis=1))
+    classify_results.rename(columns={0:'true', 1:'score'}, inplace=True)
     classify_results = classify_results.sort_values(by='score', ascending=False)[:N]
-    Npos_in_N = classify_results['isFraud'].sum()
+    Npos_in_N = classify_results['true'].sum()
 
     fig, ax = plt.subplots(1, 1, figsize=(16, 2))
-    ims = ax.imshow(np.reshape(classify_results.isFraud.values, [1, -1]), extent=[-0.5, N, N/50, -0.5])
+    ims = ax.imshow(np.reshape(classify_results.true.values, [1, -1]), extent=[-0.5, N, N/50, -0.5])
     ax.yaxis.set_visible(False)
     # ax.xaxis.set_ticklabels
     plt.colorbar(ims)
@@ -135,15 +145,15 @@ def median_imputation(df, median_impute_limit=0.95, impute_val=-999):
     return df
 
 
-def train_test_isoF(X_train, y_train, X_test=None, y_test=None, max_samples=1024, feature_list=None):
-    if not feature_list is None:
-        X_train, X_test = X_train[feature_list], X_test[feature_list]
-    ifo = IsolationForest(n_estimators=50, max_samples=max_samples)
-    ifo.fit(X_train)
-    y_pred_ifo = ifo.decision_function(X_train)
-    print('AUC Score on Train: {:.3f}'.format(roc_auc_score(y_train, -y_pred_ifo)))
-    if X_test is None:
-        return ifo
-    y_pred_ifo_test = ifo.decision_function(X_test)
-    print('AUC Score on Test: {:.3f}'.format(roc_auc_score(y_test, -y_pred_ifo_test)))
-    return ifo
+# def train_test_isoF(X_train, y_train, X_test=None, y_test=None, max_samples=1024, feature_list=None):
+#     if not feature_list is None:
+#         X_train, X_test = X_train[feature_list], X_test[feature_list]
+#     ifo = IsolationForest(n_estimators=50, max_samples=max_samples)
+#     ifo.fit(X_train)
+#     y_pred_ifo = ifo.decision_function(X_train)
+#     print('AUC Score on Train: {:.3f}'.format(roc_auc_score(y_train, -y_pred_ifo)))
+#     if X_test is None:
+#         return ifo
+#     y_pred_ifo_test = ifo.decision_function(X_test)
+#     print('AUC Score on Test: {:.3f}'.format(roc_auc_score(y_test, -y_pred_ifo_test)))
+#     return ifo
