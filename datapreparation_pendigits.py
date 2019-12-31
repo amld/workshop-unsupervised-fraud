@@ -10,10 +10,7 @@ Done here:
 - shuffling of data
 
 Necessary preparation during the workshop:
-- Removal of duplicates
-(NB: df.duplicated(df.drop(columns=['id']).columns).sum() shows there are duplicates)
-- For some algorithms: normalization, categorical encoding
-
+- Nothing
 """
 
 import pandas as pd
@@ -24,11 +21,11 @@ from scipy.io import arff
 ## Path definitions
 X_PATH = 'data/x_kdd.pkl'
 Y_PATH = 'data/y_kdd.pkl'
-pendigits_path = r'data/KDDCup99_original.arff'
+kddcup_path = r'data/KDDCup99_original.arff'
 
 
 ## Load data
-data = arff.loadarff(pendigits_path)
+data = arff.loadarff(kddcup_path)
 df = pd.DataFrame(data[0])
 df = df.drop(columns=['id'])
 df.outlier = df.outlier.map({b"'yes'":1, b"'no'":0})
