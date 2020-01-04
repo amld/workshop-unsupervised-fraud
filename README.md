@@ -11,9 +11,21 @@ See also https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.
 To get Docker to work, 
 - Download and install Docker Desktop
 - In the base directory, execute:
-    $ docker build docker-python -t jupyter-outlieramld
+
+    `$ docker build docker-python -t jupyter-outlieramld`
     This will fetch the base image and additionally install keras and pyod
-- Check that the image is built by typing:
-    $ docker images 
+- Check that the image is built:
+    `$ docker images`
     `jupyter-outlieramld` should be there
-- The following command will run the image 
+- The following command will run the image, broadcast the notebook server to port 8888, and attach a volume (a connection to the host' filesystem)
+    `$ docker run -it -p 8888:8888 -v $(pwd):/home/jovyan jupyter-outlieramld`
+    
+**Docker tips**
+- `$ docker ps -a` shows all Docker containers, running and stopped
+- A terminal may be opened in a running Docker container, with `$ docker exec -it <container id> bash` 
+- To kill all stopped Docker containers (which may save some space, no need to do so when in doubt):
+`$ docker containers prune`
+
+
+    
+
