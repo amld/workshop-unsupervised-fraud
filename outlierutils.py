@@ -1,19 +1,30 @@
 import requests
 import json
+import functools
+
 import seaborn as sns
 import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from sklearn.ensemble import IsolationForest
 from sklearn.metrics import roc_auc_score
 
-
+def admin_only(func):
+    """ Decorator for dangerous functions
+    """
+    @functools.wraps(func)
+    def wrapper_decorator(*args, **kwargs):
+        if not args[0].username == 'admin': #NB: first arg to an object-method is self
+            print('Admin only!')
+            return None
+        if not kwargs.get('iknowwhatiamdoing', None):
+            print('pass iknowwhatiamdoing=True to execute this')
+            return None
+        value = func(*args, **kwargs)
+        return value
+    return wrapper_decorator
 
 class LabelSubmitter():
-    """
-    To-do: generate a nice message when token is expired
-    """
     def __init__(self, username, password, url='http://127.0.0.1:5000'):
         self.username = username
         self.password = password
@@ -32,18 +43,17 @@ class LabelSubmitter():
         except KeyError:
             return auth
 
-    def post_predictions(self, idx):
+    def post_predictions(self, idx, endpoint='pen'):
         """ Posts to /label
         sets self.last_labels
         """
         idx = [int(n) for n in idx] # replace numpy array and int64 by list with ints
-        res = requests.post(url=self.base_url + '/label',
+        res = requests.post(url=self.base_url + '/label/{}'.format(endpoint),
                     json={'data': {'idx': idx}},
                    headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
+        self.res = res
         try:
-            self.res = res
             result = json.loads(res.text)['result']
-
             unzips = list(zip(*result))
             labels = pd.Series(index=unzips[0], data=unzips[1]).sort_index()
             self.last_labels = labels
@@ -52,14 +62,14 @@ class LabelSubmitter():
             print('number of positives in submission: {:d}'.format(int(labels.sum())))
             print('precision of submission: {:.2%}'.format(labels.mean()))
         except Exception:
-            print(json.loads(res.text)['info'])
+            print(json.loads(res.text))
 
-    def get_labels(self):
+    def get_labels(self, endpoint='pen'):
         """ 'Gets' to /label
         sets self.all_labels
         """
         try:
-            res = requests.get(url=self.base_url + '/label',
+            res = requests.get(url=self.base_url + '/label/{}'.format(endpoint),
                        headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
             result = json.loads(res.text)['result']
             unzips = list(zip(*result))
@@ -72,8 +82,8 @@ class LabelSubmitter():
         except Exception:
             print(json.loads(res.text))
 
-    def get_statistics(self, plot=True):
-        res = requests.get(url=self.base_url + '/labelstats',
+    def get_statistics(self, endpoint='pen', plot=True):
+        res = requests.get(url=self.base_url + '/labelstats/{}'.format(endpoint),
            headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
         stats = json.loads(res.text)['result']
         stats_df = pd.DataFrame.from_dict(stats).T
@@ -86,6 +96,26 @@ class LabelSubmitter():
             axs[1].set_title('Precision [%]')
             plt.tight_layout()
         return stats_df
+
+    def add_user(self, username, password):
+        res = requests.post(url=self.base_url + '/newuser',
+           headers={'Authorization': 'JWT {}'.format(self.jwt_token)},
+            json={'username': username,
+                          'password': password}
+                           )
+        print(json.loads(res.text))
+
+    @admin_only
+    def delete_user(self, username, iknowwhatiamdoing=False):
+        res = requests.delete(url=self.base_url + '/removeuser/{}'.format(username),
+           headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
+        print(json.loads(res.text))
+
+    @admin_only
+    def delete_labels(self, username, endpoint='pen', iknowwhatiamdoing=False):
+        res = requests.delete(url=self.base_url + '/labeladmin/{}'.format(username),
+           headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
+        print(json.loads(res.text))
 
 def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
     """
