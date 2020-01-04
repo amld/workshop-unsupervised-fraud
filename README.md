@@ -18,10 +18,13 @@ To get Docker to work,
     `$ docker images`. The image `jupyter-outlieramld` should be there
 - The following command will run the image, broadcast the notebook server to port 8888, and attach a volume (a connection to the host' filesystem)
     `$ docker run -it -p 8888:8888 -v $(pwd):/home/jovyan jupyter-outlieramld`
-    
+
+Copy-paste the link (`http://127.0.0.1:8888/?token=124a64...`) into a browser. 
+
 **Docker tips**
+- The container can be stopped by ctrl-c in the terminal when the notebook is running (the normal way)
 - `$ docker ps -a` shows all Docker containers, running and stopped
-- A terminal may be opened in a running Docker container, with `$ docker exec -it <container id> bash` 
+- A terminal may be opened in a running Docker container, with `$ docker exec -it <container id> bash`
 - To kill all stopped Docker containers (which may save some space, no need to do so when in doubt):
 `$ docker containers prune`
 
