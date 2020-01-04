@@ -15,8 +15,7 @@ To get Docker to work,
     `$ docker build docker-python -t jupyter-outlieramld`
     This will fetch the base image and additionally install keras and pyod
 - Check that the image is built:
-    `$ docker images`
-    `jupyter-outlieramld` should be there
+    `$ docker images`. The image `jupyter-outlieramld` should be there
 - The following command will run the image, broadcast the notebook server to port 8888, and attach a volume (a connection to the host' filesystem)
     `$ docker run -it -p 8888:8888 -v $(pwd):/home/jovyan jupyter-outlieramld`
     
