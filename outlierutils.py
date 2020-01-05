@@ -79,23 +79,28 @@ class LabelSubmitter():
             print('total number of positives found: {:d}'.format(int(labels.sum())))
             print('total precision: {:.2%}'.format(labels.mean()))
             return labels
-        except Exception:
+        except KeyError:
             print(json.loads(res.text))
 
     def get_statistics(self, endpoint='pen', plot=True):
-        res = requests.get(url=self.base_url + '/labelstats/{}'.format(endpoint),
-           headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
-        stats = json.loads(res.text)['result']
-        stats_df = pd.DataFrame.from_dict(stats).T
-        stats_df['precision'] = 100 * stats_df['N_positives_found'] / stats_df['N_submitted']
-        if plot:
-            fig, axs = plt.subplots(2, 1, figsize=(12,6))
-            stats_df['N_submitted'].plot(kind='bar', ax=axs[0])
-            stats_df['precision'].plot(kind='bar', ax=axs[1])
-            axs[0].set_title('Number of submitted points')
-            axs[1].set_title('Precision [%]')
-            plt.tight_layout()
-        return stats_df
+        try:
+            res = requests.get(url=self.base_url + '/labelstats/{}'.format(endpoint),
+               headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
+            stats = json.loads(res.text)['result']
+            stats_df = pd.DataFrame.from_dict(stats).T
+            stats_df['precision'] = 100 * stats_df['N_positives_found'] / stats_df['N_submitted']
+            if plot:
+                fig, axs = plt.subplots(2, 1, figsize=(12,6))
+                stats_df['N_submitted'].plot(kind='bar', ax=axs[0])
+                stats_df['precision'].plot(kind='bar', ax=axs[1])
+                axs[0].set_title('Number of submitted points')
+                axs[1].set_title('Precision [%]')
+                plt.tight_layout()
+            return stats_df
+        except KeyError:
+            print(json.loads(res.text))
+
+
 
     def add_user(self, username, password):
         res = requests.post(url=self.base_url + '/newuser',
@@ -136,12 +141,11 @@ def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
     return classify_results
 
 
-def plot_top_N(y_true, scores, N=100):
+def plot_top_N(y_true, scores, N=100, reverse=True):
     """
     y_true: np-array
     scores: np-array
     """
-
     N = min(N, len(scores))
     classify_results = pd.DataFrame(data=pd.concat((pd.Series(y_true), pd.Series(scores)), axis=1))
     classify_results.rename(columns={0:'true', 1:'score'}, inplace=True)

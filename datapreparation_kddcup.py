@@ -42,7 +42,9 @@ df.outlier = df.outlier.map({'yes':1, 'no':0})
 ## Shuffle the columns
 df = df.sample(frac=1, random_state=2718)
 df = df.reset_index(drop=True)
+df = df.drop(columns='id')
 
 ## Pickle the output
 df.drop(columns='outlier').to_pickle(X_PATH)
 df.outlier.to_pickle(Y_PATH)
+print('Written output to: {}'.format(X_PATH))
