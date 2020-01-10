@@ -129,6 +129,9 @@ def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
 
     kdeplot_options are passed to sns.kdeplot
     """
+    assert isinstance(y_true, np.ndarray), 'y_true should be np.ndarray'
+    assert isinstance(scores, np.ndarray), 'scores should be np.ndarray'
+    assert len(y_true) == len(scores), 'y_true and scores should be of equal length'
     roc_score = roc_auc_score(y_true, scores)
     classify_results = pd.DataFrame(data=pd.concat((pd.Series(y_true), pd.Series(scores)), axis=1))
     classify_results.rename(columns={0:'true', 1:'score'}, inplace=True)
