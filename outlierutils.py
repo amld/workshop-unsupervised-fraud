@@ -124,10 +124,13 @@ class LabelSubmitter():
 
 def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
     """
-    y_true: np-array
-    scores: np-array
+    y_true (np-array): array with actual labels (0/1)
+    scores (np-array): array with outlier scores
+    title (str): title to be added to plot
 
-    kdeplot_options are passed to sns.kdeplot
+    **kdeplot_options (such as bw for kde kernel width) are passed to sns.kdeplot()
+
+    Returns: a pd.DataFrame with classification results
     """
     assert isinstance(y_true, np.ndarray), 'y_true should be np.ndarray'
     assert isinstance(scores, np.ndarray), 'scores should be np.ndarray'
@@ -146,8 +149,11 @@ def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
 
 def plot_top_N(y_true, scores, N=100):
     """
-    y_true: np-array
-    scores: np-array
+    y_true (np-array): array with actual labels (0/1)
+    scores (np-array): array with outlier scores
+    N (int): top-N size
+    Returns: a pd.DataFrame with classification results
+
     """
     assert isinstance(y_true, np.ndarray), 'y_true should be np.ndarray'
     assert isinstance(scores, np.ndarray), 'scores should be np.ndarray'
