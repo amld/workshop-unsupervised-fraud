@@ -1,6 +1,11 @@
+# data directories
+bigdata/
+
 # data files
 *.csv
-*.pkl
+
+.DS_Store
+
 
 .local/
 # Byte-compiled / optimized / DLL files

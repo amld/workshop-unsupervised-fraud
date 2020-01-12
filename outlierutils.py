@@ -152,6 +152,7 @@ def plot_top_N(y_true, scores, N=100):
     y_true (np-array): array with actual labels (0/1)
     scores (np-array): array with outlier scores
     N (int): top-N size
+    
     Returns: a pd.DataFrame with classification results
 
     """

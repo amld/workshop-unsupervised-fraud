@@ -12,7 +12,7 @@ Done here:
 - saving the columns of the transaction dataset (may be useful at some point)
 
 Necessary preparation during the workshop:
-- normalization, categorical encoding, NaN filling, .... 
+- normalization, categorical encoding, NaN filling, ....
 
 NB: in Anaconda installation, execute with pythonw
 """
@@ -24,13 +24,13 @@ from outlierutils import reduce_mem_usage
 n_rows = int(200E3) # keep data set small enough (full is about 400E3)
 
 ## Path definitions
-RAW_TRAX_DATA_PATH = 'data/train_transaction.csv'
-RAW_ID_DATA_PATH = 'data/train_identity.csv'
+RAW_TRAX_DATA_PATH = 'bigdata/train_transaction.csv'
+RAW_ID_DATA_PATH = 'bigdata/train_identity.csv'
 
-X_DATA_PATH = 'data/x_fraud.pkl'
-Y_DATA_PATH = 'data/y_fraud.pkl'
+X_DATA_PATH = 'bigdata/x_fraud.pkl'
+Y_DATA_PATH = 'bigdata/y_fraud.pkl'
 
-TRAXCOLUMNS_PATH = 'data/trax_columns.pkl'
+TRAXCOLUMNS_PATH = 'bigdata/trax_columns.pkl'
 
 ## Load data
 # "Left table": load only n rows

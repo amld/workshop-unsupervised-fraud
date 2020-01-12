@@ -21,10 +21,10 @@ from scipy.io import arff
 import numpy as np
 
 ## Path definitions
-X_PATH = 'data/x_kdd_prepared.pkl'
-Y_PATH = 'data/y_kdd_prepared.pkl'
+X_PATH = 'bigdata/x_kdd_prepared.pkl'
+Y_PATH = 'bigdata/y_kdd_prepared.pkl'
 
-kddcup_path = r'data/KDDCup99_withoutdupl_norm_1ofn.arff'
+kddcup_path = r'bigdata/KDDCup99_withoutdupl_norm_1ofn.arff'
 
 
 ## Load data
