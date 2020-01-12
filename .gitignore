@@ -7,8 +7,10 @@ archive/
 .DS_Store
 **/.DS_Store
 
-
+.keras/
 .local/
+.jupyter/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
