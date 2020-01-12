@@ -1,10 +1,11 @@
 # data directories
 bigdata/
-
+archive/
 # data files
 *.csv
 
 .DS_Store
+**/.DS_Store
 
 
 .local/
