@@ -5,10 +5,13 @@ Repository for the Fraud Detection (outlier detection on mixed data) workshop, A
 To clone the repo:
 
 `mkdir <DIR>`
+
 `cd <DIR>`
+
 `git clone https://github.com/DonErnesto/amld2020-unsupervised`
+
 `cd amld2020-unsupervised/`
-`
+
 
 
 ## Docker instructions
