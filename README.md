@@ -40,3 +40,7 @@ Copy-paste the link (`http://127.0.0.1:8888/?token=124a64...`) into a browser.
 - A terminal may be opened in a running Docker container, with `$ docker exec -it <container id> bash`
 - To kill all stopped Docker containers (which may save some space, no need to do so when in doubt):
 `$ docker containers prune`
+
+## Getting the data
+
+....
