@@ -114,13 +114,20 @@ class LabelSubmitter():
     def delete_user(self, username, iknowwhatiamdoing=False):
         res = requests.delete(url=self.base_url + '/removeuser/{}'.format(username),
            headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
-        print(json.loads(res.text))
+        try:
+            print(json.loads(res.text))
+        except:
+            return res
 
     @admin_only
     def delete_labels(self, username, endpoint='pen', iknowwhatiamdoing=False):
-        res = requests.delete(url=self.base_url + '/labeladmin/{}'.format(username),
+        res = requests.delete(url=self.base_url + '/labeladmin/{}/{}'.format(
+        endpoint, username),
            headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
-        print(json.loads(res.text))
+        try:
+            print(json.loads(res.text))
+        except:
+            return res
 
 def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
     """
@@ -152,7 +159,7 @@ def plot_top_N(y_true, scores, N=100):
     y_true (np-array): array with actual labels (0/1)
     scores (np-array): array with outlier scores
     N (int): top-N size
-    
+
     Returns: a pd.DataFrame with classification results
 
     """
