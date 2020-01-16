@@ -5,10 +5,10 @@ Repository for the Fraud Detection (outlier detection on mixed data) workshop, A
 
 - By cloning the repo, you will have the notebooks and data files needed during the workshop
 - To have a working environment for the code, you may either:
-    - Use the colab link in the `*_colab.ipynb` notebooks
+    - Use the colab link in the `*_colab.ipynb` notebooks (NB: a google account is needed for this!)
     - Use Docker (in that case, be sure to run the Dockerfile, see below)
     - Install the packages from the `requirements.txt`
-    
+
 For the workshop challenge, you will be submitting to an API. Working internet is therefore vital! (the data quantities are however rather small).
 
 
