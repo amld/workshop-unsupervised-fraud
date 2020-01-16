@@ -2,6 +2,11 @@
 bigdata/
 archive/
 private/
+
+# solutions
+solution*.ipynb
+notebooks/solution*
+
 # data files
 *.csv
 
