@@ -8,6 +8,16 @@ import matplotlib.pyplot as plt
 import pandas as pd
 
 from sklearn.metrics import roc_auc_score
+cost_dict = {'kdd':
+                {'FP':-10,
+                'TP':500},
+            'fraud':
+                {'FP': -10,
+                'TP':500},
+            'pen':
+                {'FP':-10,
+                'TP':1000}
+            }
 
 def admin_only(func):
     """ Decorator for dangerous functions
@@ -100,6 +110,30 @@ class LabelSubmitter():
         except KeyError:
             print(json.loads(res.text))
 
+    def get_scores(self, endpoint='pen', plot=True):
+        try:
+            cost_fp, cost_tp = cost_dict[endpoint]['FP'], cost_dict[endpoint]['TP']
+            res = requests.get(url=self.base_url + '/labelstats/{}'.format(endpoint),
+               headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
+            stats = json.loads(res.text)['result']
+            stats_df = pd.DataFrame.from_dict(stats).T
+            stats_df = stats_df.rename(columns={'N_positives_found':
+                        'N_true_positives'})
+
+            stats_df['N_false_positives'] = stats_df['N_submitted'] - stats_df['N_true_positives']
+
+            stats_df['score'] = (cost_fp * stats_df['N_false_positives'] +
+                                    cost_tp * stats_df['N_true_positives']
+                                )
+            if plot:
+                fig, axs = plt.subplots(1, 1, figsize=(14,6))
+                stats_df['score'].plot(kind='bar', ax=axs)
+                axs.set_title('Score')
+                plt.tight_layout()
+            return stats_df
+        except KeyError:
+            return stats
+            print(json.loads(res.text))
 
 
     def add_user(self, username, password):

@@ -1,6 +1,7 @@
 # data directories
 bigdata/
 archive/
+private/
 # data files
 *.csv
 
