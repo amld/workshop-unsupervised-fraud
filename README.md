@@ -1,6 +1,16 @@
 # amld2020-unsupervised
 Repository for the Fraud Detection (outlier detection on mixed data) workshop, AMLD 2020  
 
+## General instructions:
+
+- By cloning the repo, you will have the notebooks and data files needed during the workshop
+- To have a working environment for the code, you may either:
+    - Use the colab link in the `*_colab.ipynb` notebooks
+    - Use Docker (in that case, be sure to run the Dockerfile, see below)
+    - Install the packages from the `requirements.txt`
+For the workshop challenge, you will be submitting to an API. Working internet is therefore vital! (the data quantities are however rather small).
+
+
 ## Cloning the repo
 To clone the repo:
 
@@ -14,7 +24,7 @@ To clone the repo:
 
 
 
-## Docker instructions
+## Docker instructions (If you prefer Docker. Otherwise, use colab)
 The notebooks in the folder /notebooks depend on scikit-learn and pyod, which in turn requires Keras and Tensorflow for certain models. It is advised to use the Docker image provided in docker-python, as it comes with all necessary packages.
 
 This image is based on the docker image `jupyter/tensorflow-notebook`,
@@ -43,7 +53,3 @@ Copy-paste the link (`http://127.0.0.1:8888/?token=124a64...`) into a browser.
 - A terminal may be opened in a running Docker container, with `$ docker exec -it <container id> bash`
 - To kill all stopped Docker containers (which may save some space, no need to do so when in doubt):
 `$ docker containers prune`
-
-## Getting the data
-
-....
