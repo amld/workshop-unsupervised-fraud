@@ -7,7 +7,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 
-from sklearn.metrics import roc_auc_score
+from sklearn.metrics import roc_auc_score, average_precision_score
 cost_dict = {'kdd':
                 {'FP':-10,
                 'TP':500},
@@ -178,15 +178,16 @@ def plot_outlier_scores(y_true, scores, title='', **kdeplot_options):
     assert isinstance(y_true, np.ndarray), 'y_true should be np.ndarray'
     assert isinstance(scores, np.ndarray), 'scores should be np.ndarray'
     assert len(y_true) == len(scores), 'y_true and scores should be of equal length'
-    roc_score = roc_auc_score(y_true, scores)
+    aucroc_score = roc_auc_score(y_true, scores)
+    aucpr_score = average_precision_score(y_true, scores)
     classify_results = pd.DataFrame(data=pd.concat((pd.Series(y_true), pd.Series(scores)), axis=1))
     classify_results.rename(columns={0:'true', 1:'score'}, inplace=True)
     sns.kdeplot(classify_results.loc[classify_results.true==0, 'score'], label='negatives',
                 shade=True, **kdeplot_options)
     sns.kdeplot(classify_results.loc[classify_results.true==1, 'score'], label='positives',
                 shade=True, **kdeplot_options)
-    plt.title('{} AUC: {:.3f}'.format(title, roc_score))
-    plt.xlabel('Score');
+    plt.title('{} AUC-ROC: {:.3f}, AUC-PR: {:.3f}'.format(title, aucroc_score, aucpr_score))
+    plt.xlabel('Predicted outlier score');
     return classify_results
 
 
@@ -209,7 +210,9 @@ def plot_top_N(y_true, scores, N=100):
     Npos_in_N = classify_results['true'].sum()
 
     fig, ax = plt.subplots(1, 1, figsize=(16, 2))
-    ims = ax.imshow(np.reshape(classify_results.true.values, [1, -1]), extent=[-0.5, N, N/50, -0.5])
+    ims = ax.imshow(np.reshape(classify_results.true.values, [1, -1]),
+                extent=[-0.5, N, N/50, -0.5],
+                vmin=0, vmax=1)
     ax.yaxis.set_visible(False)
     # ax.xaxis.set_ticklabels
     plt.colorbar(ims)

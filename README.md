@@ -8,7 +8,7 @@ Repository for the Fraud Detection (outlier detection on mixed data) workshop, A
     - Use the colab link in the `*_colab.ipynb` notebooks (NB: a google account is needed for this!)
     - Use Docker (in that case, be sure to run the Dockerfile, see below)
     - Install the packages from the `requirements.txt`
-
+- NB: All has been tested with Python 3.6.x only
 For the workshop challenge, you will be submitting to an API that is hosted on AWS. Internet access is therefore vital! (the data quantities are however rather small).
 
 
