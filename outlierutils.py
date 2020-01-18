@@ -42,8 +42,9 @@ class LabelSubmitter():
         self.base_url = url
         self.last_labels = None
         self.all_labels = None
+        self._get_jwt_token()
 
-    def get_jwt_token(self):
+    def _get_jwt_token(self):
         """ Posts to /auth
         """
         auth = requests.post(self.base_url + '/auth', json={"username": f"{self.username}",
@@ -51,6 +52,7 @@ class LabelSubmitter():
         try:
             self.jwt_token = json.loads(auth.text)['access_token']
         except KeyError:
+            print('Is the username and password correct?')
             return auth
 
     def post_predictions(self, idx, endpoint='pen'):
