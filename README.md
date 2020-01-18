@@ -27,11 +27,11 @@ To clone the repo:
 ## Running the exercises
 During the workshop, we will work on two Notebooks, `exercises_1.ipynb` (or `exercises_1_colab.ipynb`) and `challenge.ipynb` (or `challenge_colab.ipynb`).
 
-Instructions will be given during the workshop. 
+Instructions will be given during the workshop.
 
 ## Getting the right Python Environments
 
-The notebooks in the directory `/notebooks depend on packages like scikit-learn and pyod, which in turn have other dependencies. To guarantee a compatible environment, there are three options.
+The notebooks in the directory `/notebooks`  depend on packages like scikit-learn and pyod, which in turn have other dependencies. To guarantee a compatible environment, there are three options.
 
 The first option is to use the `_colab.ipynb` notebooks that have a colab link. **For colab, a Google account is necessary**.
 
@@ -72,5 +72,5 @@ Copy-paste the link (`http://127.0.0.1:8888/?token=124a64...`) into a browser.
 - To kill all stopped Docker containers (which may save some space, no need to do so when in doubt):
 `$ docker containers prune`
 
-### Creating a conda- or virtual environment
+### Creating a conda- or virtual environment (option 3)
 Run `pip install -r requirements.txt`
