@@ -9,7 +9,7 @@ Repository for the Fraud Detection (outlier detection on mixed data) workshop, A
     - Use Docker (in that case, be sure to run the Dockerfile, see below)
     - Install the packages from the `requirements.txt`
 
-For the workshop challenge, you will be submitting to an API. Working internet is therefore vital! (the data quantities are however rather small).
+For the workshop challenge, you will be submitting to an API that is hosted on AWS. Internet access is therefore vital! (the data quantities are however rather small).
 
 
 ## Cloning the repo
@@ -19,20 +19,37 @@ To clone the repo:
 
 `cd <DIR>`
 
-`git clone https://github.com/DonErnesto/amld2020-unsupervised`
+`git clone https://github.com/amld/workshop-unsupervised-fraud`
 
-`cd amld2020-unsupervised/`
+`cd workshop-unsupervised-fraud/`
 
 
+## Running the exercises
+During the workshop, we will work on two Notebooks, `exercises_1.ipynb` (or `exercises_1_colab.ipynb`) and `challenge.ipynb` (or `challenge_colab.ipynb`).
 
-## Docker instructions (If you prefer Docker. Otherwise, use colab)
-The notebooks in the folder /notebooks depend on scikit-learn and pyod, which in turn requires Keras and Tensorflow for certain models. It is advised to use the Docker image provided in docker-python, as it comes with all necessary packages.
+Instructions will be given during the workshop. 
 
-This image is based on the docker image `jupyter/tensorflow-notebook`,
+## Getting the right Python Environments
+
+The notebooks in the directory `/notebooks depend on packages like scikit-learn and pyod, which in turn have other dependencies. To guarantee a compatible environment, there are three options.
+
+The first option is to use the `_colab.ipynb` notebooks that have a colab link. **For colab, a Google account is necessary**.
+
+The second one is to use the Dockerfile that is provided in `\docker-python`. Note that Docker needs to be installed, and that the Docker image is large, almost 4GB, so this needs to be done **before the workshop**.
+
+The final option is to create a conda environment (or other virtual environment) with the packages in `requirements.txt` installed.
+
+
+### Colab instructions (option 1)
+Open the jupyter notebook with the colab link (`_colab.ipynb`). This link will direct you to Google's colab.
+
+
+### Docker instructions (option 2)
+The Docker image is based on the docker image `jupyter/tensorflow-notebook`,
 see also https://jupyter-docker-stacks.readthedocs.io/en/latest/using/selecting.html#jupyter-tensorflow-notebook
+This image may also be useful for other workshops.
 
-
-Installing Docker and downloading the tensorflow-notebook image requires roughly 6 GB of disk space.
+Installing Docker and downloading the tensorflow-notebook image requires roughly **6 GB of disk space**.
 
 
 To get Docker up and running,
@@ -54,3 +71,6 @@ Copy-paste the link (`http://127.0.0.1:8888/?token=124a64...`) into a browser.
 - A terminal may be opened in a running Docker container, with `$ docker exec -it <container id> bash`
 - To kill all stopped Docker containers (which may save some space, no need to do so when in doubt):
 `$ docker containers prune`
+
+### Creating a conda- or virtual environment
+Run `pip install -r requirements.txt`
