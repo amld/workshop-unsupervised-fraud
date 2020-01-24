@@ -9,7 +9,7 @@ import pandas as pd
 
 from sklearn.metrics import roc_auc_score, average_precision_score
 cost_dict = {'kdd':
-                {'FP':-10,
+                {'FP':-25,
                 'TP':500},
             'fraud':
                 {'FP': -10,
@@ -43,6 +43,7 @@ class LabelSubmitter():
         self.last_labels = None
         self.all_labels = None
         self._get_jwt_token()
+        self._previous_score = None
 
     def _get_jwt_token(self):
         """ Posts to /auth
@@ -71,9 +72,20 @@ class LabelSubmitter():
             self.last_labels = labels
 
             print(json.loads(res.text)['info'])
-            print('number of positives in submission: {:d}'.format(int(labels.sum())))
-            print('precision of submission: {:.2%}'.format(labels.mean()))
-        except Exception:
+            N_tp = int(labels.sum())
+            N_fp = int(len(labels) - N_tp)
+            score = self._calculate_score(endpoint,
+                                            N_tp=N_tp,
+                                            N_fp=N_fp
+                                            )
+            precision = labels.mean()
+            print('number of positives in submission: {:d}'.format(N_tp))
+            print('precision of submission: {:.2%}'.format(precision))
+            print('current score: {}'.format(score))
+            print('previous score: {}'.format(self._previous_score))
+            self._previous_score = score
+        except Exception as e:
+            print(e)
             print(json.loads(res.text))
 
     def get_labels(self, endpoint='pen'):
@@ -87,9 +99,16 @@ class LabelSubmitter():
             unzips = list(zip(*result))
             labels = pd.Series(index=unzips[0], data=unzips[1]).sort_index()
             self.all_labels = labels
+            N_tp = int(labels.sum())
+            N_fp = int(len(labels) - N_tp)
+            score = self._calculate_score(endpoint,
+                                            N_tp=N_tp,
+                                            N_fp=N_fp
+                                            )
             print('number of predictions made: {:d}'.format(int(len(labels))))
             print('total number of positives found: {:d}'.format(int(labels.sum())))
             print('total precision: {:.2%}'.format(labels.mean()))
+            print('score: {}'.format(score))
             return labels
         except KeyError:
             print(json.loads(res.text))
@@ -114,7 +133,6 @@ class LabelSubmitter():
 
     def get_scores(self, endpoint='pen', plot=True, plot_only_active=True):
         try:
-            cost_fp, cost_tp = cost_dict[endpoint]['FP'], cost_dict[endpoint]['TP']
             res = requests.get(url=self.base_url + '/labelstats/{}'.format(endpoint),
                headers={'Authorization': 'JWT {}'.format(self.jwt_token)})
             stats = json.loads(res.text)['result']
@@ -124,9 +142,11 @@ class LabelSubmitter():
 
             stats_df['N_false_positives'] = stats_df['N_submitted'] - stats_df['N_true_positives']
 
-            stats_df['score'] = (cost_fp * stats_df['N_false_positives'] +
-                                    cost_tp * stats_df['N_true_positives']
-                                )
+            stats_df['score'] = self._calculate_score(
+                            endpoint=endpoint,
+                            N_tp=stats_df['N_true_positives'],
+                            N_fp=stats_df['N_false_positives']
+                                                    )
             if plot:
                 fig, axs = plt.subplots(1, 1, figsize=(14,6))
                 if plot_only_active:
@@ -147,6 +167,11 @@ class LabelSubmitter():
                           'password': password}
                            )
         print(json.loads(res.text))
+
+    @staticmethod
+    def _calculate_score(endpoint, N_tp, N_fp):
+        cost_fp, cost_tp = cost_dict[endpoint]['FP'], cost_dict[endpoint]['TP']
+        return (cost_fp * N_fp + cost_tp * N_tp)
 
     @admin_only
     def delete_user(self, username, iknowwhatiamdoing=False):
