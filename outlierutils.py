@@ -81,9 +81,9 @@ class LabelSubmitter():
             precision = labels.mean()
             print('number of positives in submission: {:d}'.format(N_tp))
             print('precision of submission: {:.2%}'.format(precision))
-            print('current score: {}'.format(score))
-            print('previous score: {}'.format(self._previous_score))
-            self._previous_score = score
+            #print('current score: {}'.format(score))
+            #print('previous score: {}'.format(self._previous_score))
+            #self._previous_score = score
         except Exception as e:
             print(e)
             print(json.loads(res.text))
