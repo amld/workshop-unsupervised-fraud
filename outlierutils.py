@@ -204,9 +204,12 @@ def plot_top_N(y_true, scores, N=100):
     Returns: a pd.DataFrame with classification results
 
     """
-    assert isinstance(y_true, np.ndarray), 'y_true should be np.ndarray'
-    assert isinstance(scores, np.ndarray), 'scores should be np.ndarray'
-    assert len(y_true) == len(scores), 'y_true and scores should be of equal length'
+    assert len(y_true) == len(scores), 'Error: '\
+    'Expecting y_true and scores to be 1-D and of equal length'
+    if isinstance(y_true, pd.Series):
+        y_true = y_true.values
+    if isinstance(scores, pd.Series):
+        scores = scores.values
     N = min(N, len(scores))
     classify_results = pd.DataFrame(data=pd.concat((pd.Series(y_true), pd.Series(scores)), axis=1))
     classify_results.rename(columns={0:'true', 1:'score'}, inplace=True)
@@ -221,7 +224,7 @@ def plot_top_N(y_true, scores, N=100):
     # ax.xaxis.set_ticklabels
     plt.colorbar(ims)
     plt.xlabel('Outlier rank [-]')
-    plt.title(f'Number of positives found: {Npos_in_N} (P@Rank{N}: {Npos_in_N/N:.1%})')
+    plt.title(f'Yellow: positive, Purple:Negative. Number of positives found: {Npos_in_N} (P@Rank{N}: {Npos_in_N/N:.1%})')
     #plt.show()
     return classify_results
 
