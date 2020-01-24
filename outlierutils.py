@@ -112,7 +112,7 @@ class LabelSubmitter():
         except KeyError:
             print(json.loads(res.text))
 
-    def get_scores(self, endpoint='pen', plot=True):
+    def get_scores(self, endpoint='pen', plot=True, plot_only_active=True):
         try:
             cost_fp, cost_tp = cost_dict[endpoint]['FP'], cost_dict[endpoint]['TP']
             res = requests.get(url=self.base_url + '/labelstats/{}'.format(endpoint),
@@ -129,6 +129,8 @@ class LabelSubmitter():
                                 )
             if plot:
                 fig, axs = plt.subplots(1, 1, figsize=(14,6))
+                if plot_only_active:
+                    stats_df = stats_df.loc[stats_df['N_submitted'] > 0, :]
                 stats_df['score'].plot(kind='bar', ax=axs)
                 axs.set_title('Score')
                 plt.tight_layout()
