@@ -4,7 +4,6 @@ archive/
 private/
 
 # solutions
-notebooks/solution*
 
 # data files
 *.csv
